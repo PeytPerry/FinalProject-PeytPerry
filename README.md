@@ -1,30 +1,28 @@
-## About the project:
+## Student Manager Application:
 
-This is a web api created using Python and SQLite and utilizes FastAPI for the endpoints.
-The Web interface is just html and forms.
+A simple CRUD application for managing student records, built with FastAPI and deployed to Render.
 
-Note that this is a monolithic setup (I pray that is the right way to describe this), I hope that this is acceptable considering
-that this entire class has been focused on seperate containers for frontend
-and backend.
+##Project Overview
+The Student Manager Application provides a straightforward interface for performing basic CRUD operations (Create, Read, Update, Delete) on student records. The application consists of:
 
-## Docker Setup
+## Backend API:
 
-Download the project, unzip if it is zipped.
+FastAPI REST service that handles data operations
 
-`cd Midterm_assignment`
+## Frontend:
 
-Then, make sure that you have docker destop running, and use the following command in your terminal
+HTML/CSS/JavaScript interface for user interaction
 
-`docker-compose up --build`
+## Database:
 
-Visit: [http://localhost:5000](http://localhost:5000)
+SQLite database for local development, PostgreSQL for cloud deployment
 
-To shut down the project, simply use the following:
+## starting the app
 
-`docker-compose down`
+in command line use docker-compose up -d, then navigate to http://localhost:5000 to utilize the crud operations.
 
-## Testing the API
+## Cloud deployment:
 
-Use the web interface to test GET/POST/DELETE.
+For this application I am using Render. In this case I am utilizing their free teir so the application WILL spin down after 15 minutes of inactivity.
 
-Final note, I chose to use Python, SQLite, and FastAPI as this is the stack that Samuel Echols and I used in CMPS 4200 for our AI project.
+## Requests to view the application may take up to 60 seconds for the application to spin up again.
