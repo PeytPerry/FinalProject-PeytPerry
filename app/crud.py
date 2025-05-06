@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models import Student
 from typing import List, Dict, Any
 
-def get_all_students(db: Session):
+def get_all_students(db: Session) -> List[Student]:
     """Get all students from the database"""
     return db.query(Student).all()
 
@@ -10,11 +10,9 @@ def upsert_student(db: Session, student_data: dict):
     """Create or update a student in the database"""
     student = db.query(Student).filter(Student.id == student_data.get("id")).first()
     if student:
-        
         for key, value in student_data.items():
             setattr(student, key, value)
     else:
-        
         student = Student(**student_data)
         db.add(student)
     

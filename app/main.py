@@ -32,7 +32,7 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/api/upsertStudent")
+@app.get("/api/students")
 def get_all_students(db: Session = Depends(get_db)):
     return crud.get_all_students(db)
 
@@ -41,11 +41,9 @@ async def upsert_student(request: Request, db: Session = Depends(get_db)):
     student_data = await request.json()
     return crud.upsert_student(db, student_data)
 
-
 @app.delete("/api/deleteStudent/{student_id}")
 def delete_student(student_id: int, db: Session = Depends(get_db)):
     return crud.delete_student(db, student_id)
-
 
 @app.get("/api/getStudent/{student_id}")
 def get_student(student_id: int, db: Session = Depends(get_db)):

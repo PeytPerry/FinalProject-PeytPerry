@@ -1,21 +1,26 @@
+// Network request logger
 function logRequest(method, url, status, data = null) {
   document.getElementById("lastRequest").textContent = `${method} ${url}`;
   document.getElementById("lastResponse").textContent = `Status: ${status}`;
   console.log(`${method} ${url} - Status: ${status}`, data ? data : "");
 }
 
+// Helper function to show status messages
 function showStatus(elementId, message, isError = false) {
   const statusElement = document.getElementById(elementId);
   statusElement.textContent = message;
   statusElement.className = `status-message ${isError ? "error" : "success"}`;
 
+  // Clear message after 3 seconds
   setTimeout(() => {
     statusElement.textContent = "";
     statusElement.className = "status-message";
   }, 3000);
 }
 
+// Initialize the app
 document.addEventListener("DOMContentLoaded", function () {
+  // Set up the form submission event
   document
     .getElementById("upsertForm")
     .addEventListener("submit", function (e) {
@@ -23,37 +28,30 @@ document.addEventListener("DOMContentLoaded", function () {
       upsertStudent();
     });
 
+  // Set up the load all students button
   document
     .getElementById("loadAllStudents")
     .addEventListener("click", loadAllStudents);
 
+  // Load students when the page loads
   loadAllStudents();
 });
 
+// Load all students
 async function loadAllStudents() {
   try {
     const studentsList = document.getElementById("studentsList");
     studentsList.innerHTML = "<p>Loading students...</p>";
 
-    const response = await fetch(`/api/upsertStudent`, {
-      method: "GET",
-      headers: { Accept: "application/json" },
-    });
+    // Make a direct request to get all students
+    const response = await fetch("/api/students");
+    logRequest("GET", "/api/students", response.status);
 
-    if (!response.ok && response.status !== 404) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch students: ${response.status}`);
     }
 
-    let students = [];
-    if (response.ok) {
-      try {
-        students = await response.json();
-      } catch (e) {
-        console.error("Error parsing student data:", e);
-      }
-    }
-
-    logRequest("GET", "/api/upsertStudent", response.status);
+    const students = await response.json();
     displayStudents(students);
   } catch (error) {
     console.error("Error loading students:", error);
@@ -65,6 +63,7 @@ async function loadAllStudents() {
   }
 }
 
+// Display students in the list
 function displayStudents(students) {
   const listElement = document.getElementById("studentsList");
 
@@ -94,6 +93,7 @@ function displayStudents(students) {
   });
 }
 
+// Create or update a student
 async function upsertStudent() {
   const id = document.getElementById("id").value;
   const name = document.getElementById("name").value;
@@ -126,16 +126,19 @@ async function upsertStudent() {
       `Student ${id ? "updated" : "created"} successfully!`
     );
 
+    // Clear form
     document.getElementById("id").value = "";
     document.getElementById("name").value = "";
     document.getElementById("age").value = "";
 
+    // Reload student list
     loadAllStudents();
   } catch (error) {
     showStatus("upsertStatus", `Error: ${error.message}`, true);
   }
 }
 
+// Get a student by ID
 async function getStudent() {
   const id = document.getElementById("getId").value;
   const resultElement = document.getElementById("getResult");
