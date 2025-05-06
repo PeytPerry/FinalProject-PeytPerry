@@ -7,11 +7,9 @@ import crud, models
 from database import SessionLocal, engine, Base
 from typing import List
 
-
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,14 +19,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 @app.get("/")
 def read_root():
     return FileResponse("static/index.html")
-
 
 def get_db():
     db = SessionLocal()
@@ -37,10 +32,9 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/api/students")
+@app.get("/api/upsertStudent")
 def get_all_students(db: Session = Depends(get_db)):
     return crud.get_all_students(db)
-
 
 @app.post("/api/upsertStudent")
 async def upsert_student(request: Request, db: Session = Depends(get_db)):
@@ -51,6 +45,7 @@ async def upsert_student(request: Request, db: Session = Depends(get_db)):
 @app.delete("/api/deleteStudent/{student_id}")
 def delete_student(student_id: int, db: Session = Depends(get_db)):
     return crud.delete_student(db, student_id)
+
 
 @app.get("/api/getStudent/{student_id}")
 def get_student(student_id: int, db: Session = Depends(get_db)):

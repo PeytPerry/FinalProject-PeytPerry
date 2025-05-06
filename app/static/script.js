@@ -3,6 +3,7 @@ function logRequest(method, url, status, data = null) {
   document.getElementById("lastResponse").textContent = `Status: ${status}`;
   console.log(`${method} ${url} - Status: ${status}`, data ? data : "");
 }
+
 function showStatus(elementId, message, isError = false) {
   const statusElement = document.getElementById(elementId);
   statusElement.textContent = message;
@@ -31,21 +32,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function loadAllStudents() {
   try {
-    const studentsArray = [];
+    const studentsList = document.getElementById("studentsList");
+    studentsList.innerHTML = "<p>Loading students...</p>";
 
-    for (let i = 1; i <= 10; i++) {
-      try {
-        const response = await fetch(`/api/getStudent/${i}`);
+    const response = await fetch(`/api/upsertStudent`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
 
-        if (response.ok) {
-          const student = await response.json();
-          studentsArray.push(student);
-        }
-      } catch (err) {}
+    if (!response.ok && response.status !== 404) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    logRequest("GET", "/api/getStudent/...", 200);
-    displayStudents(studentsArray);
+    let students = [];
+    if (response.ok) {
+      try {
+        students = await response.json();
+      } catch (e) {
+        console.error("Error parsing student data:", e);
+      }
+    }
+
+    logRequest("GET", "/api/upsertStudent", response.status);
+    displayStudents(students);
   } catch (error) {
     console.error("Error loading students:", error);
     showStatus(
